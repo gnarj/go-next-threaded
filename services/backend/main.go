@@ -1,19 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
+
+	"github.com/gnarj/go-next-threaded/handlers"
 )
 
 func main() {
-	handler := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		resp := []byte(`{"status: "ok"}`)
-		rw.Header().Set("Content-Type", "application/json")
-		rw.Header().Set("Content-Length", fmt.Sprint(len(resp)))
-		rw.Write(resp)
-	})
+	r := mux.NewRouter()
+
+	// Register endpoints using handlers from separate files
+	r.HandleFunc("/status", handlers.StatusHandler).Methods("GET")
+	r.HandleFunc("/username", handlers.UsernameHandler).Methods("GET")
 
 	log.Println("Server is available at http://localhost:8000")
-	log.Fatal(http.ListenAndServe(":8000", handler))
+	log.Fatal(http.ListenAndServe(":8000", r))
 }
