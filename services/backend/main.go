@@ -1,12 +1,11 @@
 package main
 
 import (
+	"backend/handlers"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
-
-	"github.com/gnarj/go-next-threaded/handlers"
 )
 
 func main() {
