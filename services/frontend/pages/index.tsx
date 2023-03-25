@@ -4,6 +4,7 @@ import { GetServerSideProps } from 'next';
 
 interface Props {
   status: string;
+  todos: string[];
   username: string;
 }
 
@@ -14,16 +15,24 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const { username } = await fetch('http://localhost:8000/username').then((x) =>
     x.json()
   );
-
+  const todos = await fetch('http://localhost:8000/todos').then((x) =>
+    x.json()
+  );
   return {
     props: {
       status: status,
+      todos: todos,
       username: username,
     },
   };
 };
 
-export default function Home({ status, username }: Props): JSX.Element {
+export default function Home({ status, todos, username }: Props): JSX.Element {
+  const todoList = todos ? (
+    todos.map((el, i) => <h3 key={i}>{el}</h3>)
+  ) : (
+    <h3>Loading....</h3>
+  );
   return (
     <div className={styles.container}>
       <Head>
@@ -36,6 +45,7 @@ export default function Home({ status, username }: Props): JSX.Element {
         <h1 className={styles.title}>
           Welcome to <a href='https://nextjs.org'>Next.js!</a>
         </h1>
+        {todoList}
         <div>
           Status is: {status}, your username is: {username}
         </div>
