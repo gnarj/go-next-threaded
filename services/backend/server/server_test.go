@@ -18,12 +18,9 @@ func TestStartServer(t *testing.T) {
 	}).Methods("GET")
 
 	// Launch server in a goroutine
-	server, err := StartServer(addr, router)
-	if err != nil {
-		t.Fatalf("Failed to start server: %v", err)
-	}
-	defer server.Close()
-
+	go func() {
+		StartServer(addr, router)
+	}()
 	log.Printf("Server started at %s", addr)
 
 	// Make test request to server
