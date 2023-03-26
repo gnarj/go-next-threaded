@@ -2,6 +2,8 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { GetServerSideProps } from 'next';
 
+import Table from '../components/Table/Table';
+
 interface Props {
   status: string;
   todos: string[];
@@ -45,7 +47,7 @@ export default function Home({ status, todos, username }: Props): JSX.Element {
         <h1 className={styles.title}>
           Welcome to <a href='https://nextjs.org'>Next.js!</a>
         </h1>
-        {todoList}
+        <Table todos={todos} />
         <div>
           Status is: {status}, your username is: {username}
         </div>

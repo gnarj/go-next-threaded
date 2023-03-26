@@ -20,7 +20,7 @@ func main() {
 
 	r := mux.NewRouter()
 
-	// Register endpoints using handlers from separate files
+	// Register endpoints
 	r.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
 		handlers.StatusHandler(w, r)
 	}).Methods("GET")
