@@ -1,8 +1,8 @@
 package main
 
 import (
+	"backend/db"
 	"backend/handlers"
-	"database/sql"
 	"log"
 	"net/http"
 
@@ -12,12 +12,12 @@ import (
 )
 
 func main() {
-	connStr := "postgresql://postgres@localhost:5432/todos?sslmode=disable"
-	// Connect to database
-	db, err := sql.Open("postgres", connStr)
+	db, err := db.CreateDBConnection()
+
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	r := mux.NewRouter()
 
 	// Register endpoints using handlers from separate files
