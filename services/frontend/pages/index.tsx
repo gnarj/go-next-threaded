@@ -30,11 +30,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
 };
 
 export default function Home({ status, todos, username }: Props): JSX.Element {
-  const todoList = todos ? (
-    todos.map((el, i) => <h3 key={i}>{el}</h3>)
-  ) : (
-    <h3>Loading....</h3>
-  );
+  const todoList = todos ? <Table todos={todos} /> : <h3>Loading....</h3>;
   return (
     <div className={styles.container}>
       <Head>
@@ -47,7 +43,7 @@ export default function Home({ status, todos, username }: Props): JSX.Element {
         <h1 className={styles.title}>
           Welcome to <a href='https://nextjs.org'>Next.js!</a>
         </h1>
-        <Table todos={todos} />
+        {todoList}
         <div>
           Status is: {status}, your username is: {username}
         </div>
