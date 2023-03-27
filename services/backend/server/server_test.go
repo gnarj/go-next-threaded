@@ -13,8 +13,8 @@ func TestStartServer(t *testing.T) {
 	router := mux.NewRouter()
 
 	// Register test endpoints
-	router.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("test"))
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(""))
 	}).Methods("GET")
 
 	// Launch server in a goroutine
@@ -24,7 +24,7 @@ func TestStartServer(t *testing.T) {
 	log.Printf("Server started at %s", addr)
 
 	// Make test request to server
-	resp, err := http.Get("http://" + addr + "/test")
+	resp, err := http.Get("http://" + addr + "/")
 	if err != nil {
 		t.Fatalf("Error making test request: %v", err)
 	}

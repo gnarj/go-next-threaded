@@ -27,12 +27,13 @@ func TestStatusHandler(t *testing.T) {
 	}
 
 	// Check the response body
-	want := &StatusResponse{Status: "ok"}
+	want := StatusResponse{Status: "ok"}
 	var got StatusResponse
+
 	if err := json.NewDecoder(rec.Body).Decode(&got); err != nil {
 		t.Fatalf("could not decode response body: %v", err)
 	}
-	if !reflect.DeepEqual(got, *want) {
+	if !reflect.DeepEqual(got, want) {
 		t.Errorf("unexpected response body: got %v, want %v", got, want)
 	}
 }
