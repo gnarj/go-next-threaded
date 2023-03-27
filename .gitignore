@@ -1,2 +1,4 @@
 
 services/backend/backend
+
+services/backend/go.sum
