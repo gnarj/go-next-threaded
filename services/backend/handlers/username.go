@@ -6,7 +6,7 @@ import (
 )
 
 type UsernameResponse struct {
-	Username string
+	Username string `json:"username"`
 }
 
 func UsernameHandler(w http.ResponseWriter, r *http.Request) {

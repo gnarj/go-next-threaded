@@ -3,6 +3,7 @@ import styles from '../styles/Home.module.css';
 import { GetServerSideProps } from 'next';
 
 import Table from '../components/Table/Table';
+import Toolbar from '../components/Toolbar/Toolbar';
 
 interface Props {
   status: string;
@@ -14,8 +15,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const { status } = await fetch('http://localhost:8000/status').then((x) =>
     x.json()
   );
-  const { username } = await fetch('http://localhost:8000/username').then((x) =>
-    x.json()
+  const { username } = await fetch('http://localhost:8000/username').then(
+    (x) => {
+      console.log(x);
+      return x.json();
+    }
   );
   const todos = await fetch('http://localhost:8000/todos').then((x) =>
     x.json()
@@ -43,6 +47,7 @@ export default function Home({ status, todos, username }: Props): JSX.Element {
         <h1 className={styles.title}>
           Welcome to <a href='https://nextjs.org'>Next.js!</a>
         </h1>
+        <Toolbar />
         {todoList}
         <div>
           Status is: {status}, your username is: {username}

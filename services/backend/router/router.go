@@ -16,6 +16,9 @@ func NewRouter(db *sql.DB) *mux.Router {
 	r.HandleFunc("/todos", func(w http.ResponseWriter, r *http.Request) {
 		handlers.TodosHandler(w, db, r)
 	}).Methods("GET")
+	r.HandleFunc("/add-todo", func(w http.ResponseWriter, r *http.Request) {
+		handlers.AddTodoHandler(w, db, r)
+	}).Methods("POST")
 	r.HandleFunc("/username", handlers.UsernameHandler).Methods("GET")
 
 	return r
