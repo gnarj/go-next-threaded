@@ -6,10 +6,8 @@ export async function addTodo(todoText: string) {
     },
     body: JSON.stringify({ todoText }),
   });
-  console.log(response);
   if (!response.ok) {
     throw new Error('Failed to add todo item');
   }
-  const todo = await response.json();
-  return todo;
+  return response;
 }

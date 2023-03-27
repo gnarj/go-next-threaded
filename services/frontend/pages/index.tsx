@@ -1,9 +1,15 @@
+import React, { useState } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 
-import Table from '../components/Table/Table';
-import Toolbar from '../components/Toolbar/Toolbar';
+const Table = dynamic(() => import('../components/Table/Table'), {
+  ssr: false,
+});
+const Toolbar = dynamic(() => import('../components/Toolbar/Toolbar'), {
+  ssr: false,
+});
 
 interface Props {
   status: string;
@@ -15,11 +21,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const { status } = await fetch('http://localhost:8000/status').then((x) =>
     x.json()
   );
-  const { username } = await fetch('http://localhost:8000/username').then(
-    (x) => {
-      console.log(x);
-      return x.json();
-    }
+  const { username } = await fetch('http://localhost:8000/username').then((x) =>
+    x.json()
   );
   const todos = await fetch('http://localhost:8000/todos').then((x) =>
     x.json()
@@ -34,7 +37,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
 };
 
 export default function Home({ status, todos, username }: Props): JSX.Element {
-  const todoList = todos ? <Table todos={todos} /> : <h3>Loading....</h3>;
+  const [todoList, setTodoList] = useState<string[]>(todos);
+
+  const handleTodoUpdate = async () => {
+    const newTodos = await fetch('http://localhost:8000/todos').then((x) =>
+      x.json()
+    );
+    setTodoList(newTodos);
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -47,8 +58,8 @@ export default function Home({ status, todos, username }: Props): JSX.Element {
         <h1 className={styles.title}>
           Welcome to <a href='https://nextjs.org'>Next.js!</a>
         </h1>
-        <Toolbar />
-        {todoList}
+        <Toolbar onTodoUpdate={handleTodoUpdate} />
+        {todoList ? <Table todos={todoList} /> : <h3>Loading....</h3>}
         <div>
           Status is: {status}, your username is: {username}
         </div>

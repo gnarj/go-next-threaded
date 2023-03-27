@@ -6,7 +6,11 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import { addTodo } from '../../utils/api';
 
-export default function TodoInput() {
+interface Props {
+  onTodoUpdate: () => void;
+}
+
+export default function TodoInput({ onTodoUpdate }: Props): JSX.Element {
   const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -14,9 +18,9 @@ export default function TodoInput() {
   };
 
   const handleAddTodo = async () => {
-    const todo = await addTodo(inputValue);
-    console.log('New todo:', todo);
+    await addTodo(inputValue);
     setInputValue('');
+    onTodoUpdate();
   };
 
   return (
