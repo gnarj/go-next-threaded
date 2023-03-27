@@ -7,18 +7,29 @@ import (
 	"net/http"
 )
 
+type TodoItem struct {
+	ID   int    `json:"id"`
+	Item string `json:"item"`
+}
+
 func TodosHandler(w http.ResponseWriter, db *sql.DB, r *http.Request) {
-	var res string
-	var todos []string
-	rows, err := db.Query("SELECT * FROM todos.todos")
+	var todos []TodoItem
+	rows, err := db.Query("SELECT id, item FROM todos.todos")
 	if err != nil {
 		log.Fatalln(err)
 		// c.JSON("An error occured")
 	}
 	for rows.Next() {
-		rows.Scan(&res)
-		todos = append(todos, res)
+		var id int
+		var item string
+		err := rows.Scan(&id, &item)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		todo := TodoItem{id, item}
+		todos = append(todos, todo)
 	}
+
 	defer rows.Close()
 	json.NewEncoder(w).Encode(todos)
 }
