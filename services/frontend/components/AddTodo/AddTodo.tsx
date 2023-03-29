@@ -43,7 +43,11 @@ export default function TodoInput({ onTodoUpdate }: Props): JSX.Element {
           />
         </Grid>
         <Grid xs={4}>
-          <Button onClick={handleAddTodo} variant='text'>
+          <Button
+            disabled={inputValue.length === 0}
+            onClick={handleAddTodo}
+            variant='contained'
+          >
             Add
           </Button>
         </Grid>
