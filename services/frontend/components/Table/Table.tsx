@@ -9,42 +9,32 @@ import CancelIcon from '@mui/icons-material/Close';
 import {
   DataGrid,
   GridColDef,
+  GridEventListener,
+  GridRowParams,
   GridRowSelectionModel,
   GridRowModesModel,
   GridRowModes,
   GridRowId,
+  GridRowsProp,
+  GridRowModel,
+  MuiEvent,
 } from '@mui/x-data-grid';
-import dynamic from 'next/dynamic';
-import { Cancel } from '@mui/icons-material';
-
-const TableActions = dynamic(
-  () => import('../../components/TableActions/TableActions'),
-  {
-    ssr: false,
-  }
-);
+import { updateTodo } from '../../utils/api';
 
 interface TodoItem {
   id: number;
   item: string;
-  editMode: boolean;
 }
 
 interface Props {
   todos: TodoItem[];
-  onTodoUpdate: () => void;
 }
 
-export default function BasicTable({
-  todos,
-  onTodoUpdate,
-}: Props): JSX.Element {
+export default function Table({ todos }: Props): JSX.Element {
+  const [rows, setRows] = React.useState<GridRowsProp>(todos);
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
     {}
   );
-  const [rowSelectionModel, setRowSelectionModel] =
-    React.useState<GridRowSelectionModel>([]);
-
   // let enableDeleteButton = rowSelectionModel.length > 0;
   // let enableUpdateButton = false;
   const handleEditClick = (id: GridRowId) => () => {
@@ -58,9 +48,48 @@ export default function BasicTable({
     });
   };
 
+  const handleSaveClick = async (id: GridRowId) => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  };
+
+  const handleRowEditStart = (
+    params: GridRowParams,
+    event: MuiEvent<React.SyntheticEvent>
+  ) => {
+    event.defaultMuiPrevented = true;
+  };
+
+  const handleRowEditStop: GridEventListener<'rowEditStop'> = (
+    params,
+    event
+  ) => {
+    event.defaultMuiPrevented = true;
+  };
+
+  const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
+    setRowModesModel(newRowModesModel);
+  };
+
+  const processRowUpdate = (newRow: GridRowModel) => {
+    const { id, item } = newRow;
+    const updatedRow = { ...newRow, isNew: false };
+    const updatedRows = rows.map((row) =>
+      row.id === newRow.id ? updatedRow : row
+    );
+    setRows(updatedRows);
+    updateTodo(id, item);
+    return updatedRow;
+  };
+
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'item', headerName: 'Item', flex: 1, minWidth: 150 },
+    { field: 'id', headerName: 'ID', type: 'number', width: 40 },
+    {
+      field: 'item',
+      headerName: 'Item',
+      editable: true,
+      flex: 1,
+      minWidth: 150,
+    },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -70,20 +99,19 @@ export default function BasicTable({
         if (isInEditMode) {
           return (
             <div>
-              <IconButton aria-label='edit'>
+              <IconButton onClick={() => handleSaveClick(id)} aria-label='save'>
                 <SaveIcon />
               </IconButton>
-              <IconButton aria-label='delete'>
-                <CancelIcon onClick={handleCancelClick(id)} />
+              <IconButton onClick={handleCancelClick(id)} aria-label='delete'>
+                <CancelIcon />
               </IconButton>
-              ,
             </div>
           );
         }
         return (
           <div>
-            <IconButton aria-label='edit'>
-              <EditIcon onClick={handleEditClick(id)} />
+            <IconButton onClick={handleEditClick(id)} aria-label='edit'>
+              <EditIcon />
             </IconButton>
             <IconButton aria-label='delete'>
               <DeleteIcon />
@@ -96,21 +124,17 @@ export default function BasicTable({
 
   return (
     <Grid container className={styles.tableContainer}>
-      {/* <TableActions
-        onTodoUpdate={onTodoUpdate}
-        enableUpdateButton={enableUpdateButton}
-        enableDeleteButton={enableDeleteButton}
-      /> */}
       <div className={styles.table}>
-        {todos && todos.length > 0 ? (
+        {rows && rows.length > 0 ? (
           <DataGrid
-            rows={todos}
+            editMode='row'
+            rows={rows}
             columns={columns}
-            checkboxSelection
-            onRowSelectionModelChange={(newRowSelectionModel) => {
-              setRowSelectionModel(newRowSelectionModel);
-            }}
-            rowSelectionModel={rowSelectionModel}
+            onRowEditStart={handleRowEditStart}
+            onRowEditStop={handleRowEditStop}
+            rowModesModel={rowModesModel}
+            onRowModesModelChange={handleRowModesModelChange}
+            processRowUpdate={processRowUpdate}
           />
         ) : (
           <span>No todos found</span>

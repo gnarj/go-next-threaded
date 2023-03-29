@@ -3,18 +3,18 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
+import { GridRowId } from '@mui/x-data-grid';
 
 const Table = dynamic(() => import('../components/Table/Table'), {
   ssr: false,
 });
-const Toolbar = dynamic(() => import('../components/AddTodo/AddTodo'), {
+const AddTodo = dynamic(() => import('../components/AddTodo/AddTodo'), {
   ssr: false,
 });
 
 interface TodoItem {
   id: number;
   item: string;
-  editMode: boolean;
 }
 
 interface Props {
@@ -45,7 +45,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
 export default function Home({ status, todos, username }: Props): JSX.Element {
   const [todoList, setTodoList] = useState<TodoItem[]>(todos);
 
-  const handleTodoUpdate = async () => {
+  const handleGetTodos = async () => {
     const newTodos = await fetch('http://localhost:8000/todos').then((x) =>
       x.json()
     );
@@ -64,8 +64,8 @@ export default function Home({ status, todos, username }: Props): JSX.Element {
         <h1 className={styles.title}>
           Welcome to <a href='https://nextjs.org'>Next.js!</a>
         </h1>
-        <Toolbar onTodoUpdate={handleTodoUpdate} />
-        <Table todos={todoList} onTodoUpdate={handleTodoUpdate} />
+        <AddTodo handleGetTodos={handleGetTodos} />
+        <Table todos={todoList} />
         <div>
           Status is: {status}, your username is: {username}
         </div>

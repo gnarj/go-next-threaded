@@ -7,10 +7,10 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { addTodo } from '../../utils/api';
 
 interface Props {
-  onTodoUpdate: () => void;
+  handleGetTodos: () => void;
 }
 
-export default function TodoInput({ onTodoUpdate }: Props): JSX.Element {
+export default function TodoInput({ handleGetTodos }: Props): JSX.Element {
   const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,7 +20,7 @@ export default function TodoInput({ onTodoUpdate }: Props): JSX.Element {
   const handleAddTodo = async () => {
     await addTodo(inputValue);
     setInputValue('');
-    onTodoUpdate();
+    handleGetTodos();
   };
 
   return (
