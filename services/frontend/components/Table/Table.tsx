@@ -93,6 +93,7 @@ export default function BasicTable({
       },
     },
   ];
+
   return (
     <Grid container className={styles.tableContainer}>
       {/* <TableActions
@@ -101,15 +102,19 @@ export default function BasicTable({
         enableDeleteButton={enableDeleteButton}
       /> */}
       <div className={styles.table}>
-        <DataGrid
-          rows={todos ? todos : []}
-          columns={columns}
-          checkboxSelection
-          onRowSelectionModelChange={(newRowSelectionModel) => {
-            setRowSelectionModel(newRowSelectionModel);
-          }}
-          rowSelectionModel={rowSelectionModel}
-        />
+        {todos && todos.length > 0 ? (
+          <DataGrid
+            rows={todos}
+            columns={columns}
+            checkboxSelection
+            onRowSelectionModelChange={(newRowSelectionModel) => {
+              setRowSelectionModel(newRowSelectionModel);
+            }}
+            rowSelectionModel={rowSelectionModel}
+          />
+        ) : (
+          <span>No todos found</span>
+        )}
       </div>
     </Grid>
   );
