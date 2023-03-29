@@ -7,13 +7,19 @@ import dynamic from 'next/dynamic';
 const Table = dynamic(() => import('../components/Table/Table'), {
   ssr: false,
 });
-const Toolbar = dynamic(() => import('../components/Toolbar/Toolbar'), {
+const Toolbar = dynamic(() => import('../components/AddTodo/AddTodo'), {
   ssr: false,
 });
 
+interface TodoItem {
+  id: number;
+  item: string;
+  editMode: boolean;
+}
+
 interface Props {
   status: string;
-  todos: string[];
+  todos: TodoItem[];
   username: string;
 }
 
@@ -37,7 +43,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
 };
 
 export default function Home({ status, todos, username }: Props): JSX.Element {
-  const [todoList, setTodoList] = useState<string[]>(todos);
+  const [todoList, setTodoList] = useState<TodoItem[]>(todos);
 
   const handleTodoUpdate = async () => {
     const newTodos = await fetch('http://localhost:8000/todos').then((x) =>
@@ -59,7 +65,7 @@ export default function Home({ status, todos, username }: Props): JSX.Element {
           Welcome to <a href='https://nextjs.org'>Next.js!</a>
         </h1>
         <Toolbar onTodoUpdate={handleTodoUpdate} />
-        {todoList ? <Table todos={todoList} /> : <h3>Loading....</h3>}
+        <Table todos={todoList} onTodoUpdate={handleTodoUpdate} />
         <div>
           Status is: {status}, your username is: {username}
         </div>
