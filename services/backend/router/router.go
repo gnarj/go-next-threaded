@@ -12,7 +12,10 @@ func NewRouter(db *sql.DB) *mux.Router {
 	r := mux.NewRouter()
 
 	// Register endpoints
+	r.HandleFunc("/username", handlers.UsernameHandler).Methods("GET")
+
 	r.HandleFunc("/status", handlers.StatusHandler).Methods("GET")
+
 	r.HandleFunc("/todos", func(w http.ResponseWriter, r *http.Request) {
 		handlers.TodosHandler(w, db, r)
 	}).Methods("GET")
@@ -22,7 +25,9 @@ func NewRouter(db *sql.DB) *mux.Router {
 	r.HandleFunc("/update-todo", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UpdateTodoHandler(w, db, r)
 	}).Methods("PUT")
-	r.HandleFunc("/username", handlers.UsernameHandler).Methods("GET")
+	r.HandleFunc("/delete-todo", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DeleteTodoHandler(w, db, r)
+	}).Methods("DELETE")
 
 	return r
 }
