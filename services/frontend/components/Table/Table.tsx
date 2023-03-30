@@ -11,7 +11,6 @@ import {
   GridColDef,
   GridEventListener,
   GridRowParams,
-  GridRowSelectionModel,
   GridRowModesModel,
   GridRowModes,
   GridRowId,
@@ -19,7 +18,7 @@ import {
   GridRowModel,
   MuiEvent,
 } from '@mui/x-data-grid';
-import { updateTodo } from '../../utils/api';
+import { deleteTodo, updateTodo } from '../../utils/api';
 
 interface TodoItem {
   id: number;
@@ -28,15 +27,26 @@ interface TodoItem {
 
 interface Props {
   todos: TodoItem[];
+  handleGetTodos: () => void;
 }
 
-export default function Table({ todos }: Props): JSX.Element {
+export default function Table({ todos, handleGetTodos }: Props): JSX.Element {
   const [rows, setRows] = React.useState<GridRowsProp>(todos);
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
     {}
   );
-  // let enableDeleteButton = rowSelectionModel.length > 0;
-  // let enableUpdateButton = false;
+
+  React.useEffect(() => {
+    if (todos) {
+      setRows(todos);
+    }
+  }, [todos]);
+
+  const handleDeleteClick = async (id: GridRowId) => {
+    await deleteTodo(Number(id));
+    handleGetTodos();
+  };
+
   const handleEditClick = (id: GridRowId) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
@@ -113,7 +123,10 @@ export default function Table({ todos }: Props): JSX.Element {
             <IconButton onClick={handleEditClick(id)} aria-label='edit'>
               <EditIcon />
             </IconButton>
-            <IconButton aria-label='delete'>
+            <IconButton
+              onClick={() => handleDeleteClick(id)}
+              aria-label='delete'
+            >
               <DeleteIcon />
             </IconButton>
           </div>

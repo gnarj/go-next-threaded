@@ -1,3 +1,12 @@
+export async function getTodos() {
+  const response = await fetch('http://localhost:8000/todos').then((x) =>
+    x.json()
+  );
+  if (!response) {
+    throw new Error('Failed to get todo items');
+  }
+  return response;
+}
 export async function addTodo(todoText: string) {
   const response = await fetch('http://localhost:8000/add-todo', {
     method: 'POST',
@@ -26,13 +35,13 @@ export async function updateTodo(id: number, item: string) {
   return response;
 }
 
-export async function deleteTodo(todoId: number) {
+export async function deleteTodo(id: number) {
   const response = await fetch('http://localhost:8000/delete-todo', {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ todoId }),
+    body: JSON.stringify({ id }),
   });
   if (!response.ok) {
     throw new Error('Failed to delete todo item');

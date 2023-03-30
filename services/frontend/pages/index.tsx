@@ -3,7 +3,7 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
-import { GridRowId } from '@mui/x-data-grid';
+import { getTodos } from '../utils/api';
 
 const Table = dynamic(() => import('../components/Table/Table'), {
   ssr: false,
@@ -46,9 +46,7 @@ export default function Home({ status, todos, username }: Props): JSX.Element {
   const [todoList, setTodoList] = useState<TodoItem[]>(todos);
 
   const handleGetTodos = async () => {
-    const newTodos = await fetch('http://localhost:8000/todos').then((x) =>
-      x.json()
-    );
+    const newTodos = await getTodos();
     setTodoList(newTodos);
   };
 
@@ -65,7 +63,7 @@ export default function Home({ status, todos, username }: Props): JSX.Element {
           Welcome to <a href='https://nextjs.org'>Next.js!</a>
         </h1>
         <AddTodo handleGetTodos={handleGetTodos} />
-        <Table todos={todoList} />
+        <Table todos={todoList} handleGetTodos={handleGetTodos} />
         <div>
           Status is: {status}, your username is: {username}
         </div>
