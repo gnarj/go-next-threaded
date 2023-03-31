@@ -32,8 +32,12 @@ func TodosHandler(w http.ResponseWriter, db *sql.DB, r *http.Request) {
 		todo := TodoItem{id, item}
 		todos = append(todos, todo)
 	}
-
 	defer rows.Close()
+
+	if len(todos) == 0 {
+		todos = []TodoItem{}
+	}
+
 	json.NewEncoder(w).Encode(todos)
 }
 
