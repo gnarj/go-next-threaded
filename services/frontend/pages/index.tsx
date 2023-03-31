@@ -37,44 +37,38 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const { username } = await fetch('http://localhost:8000/username').then((x) =>
     x.json()
   );
-  const todos = await fetch('http://localhost:8000/todos').then((x) =>
-    x.json()
-  );
+  const todos = await getTodos();
   return {
     props: {
       status: status,
-      todos: todos,
+      todos: todos ? todos : [],
       username: username,
     },
   };
 };
 
 interface HomeProps {
-  handleGetTodos: () => Promise<TodoItem[]>;
-  todos: TodoItem[];
+  initialTodos: TodoItem[];
 }
 
-function Home({ todos }: HomeProps): JSX.Element {
-  const {
-    isLoading,
-    isError,
-    data = [],
-    error,
-  } = useQuery({
-    queryKey: ['todos'],
-    queryFn: getTodos,
-    intialData: todos,
-    staleTime: 10000,
+function Home({ initialTodos }: HomeProps): JSX.Element {
+  const { isLoading, isError, data, error } = useQuery(['todos'], getTodos, {
+    initialData: initialTodos,
   });
-  let mainContent = <Table todos={data} handleGetTodos={getTodos} />;
+
+  const handleGetTodos = () => {
+    queryClient.invalidateQueries(['todos']);
+  };
+
+  let mainContent = <Table todos={data} handleGetTodos={handleGetTodos} />;
   if (isLoading) {
     mainContent = <span>Loading...</span>;
   }
 
   if (isError) {
-    mainContent = <span>Error: {error.message}</span>;
+    const errorMessage = (error as { message: string }).message;
+    mainContent = <span>Error: {errorMessage}</span>;
   }
-  console.log(data);
   return (
     <div>
       <Head>
@@ -87,7 +81,7 @@ function Home({ todos }: HomeProps): JSX.Element {
         <h1 className={styles.title}>
           Welcome to <a href='https://nextjs.org'>Next.js!</a>
         </h1>
-        <AddTodo handleGetTodos={getTodos} />
+        <AddTodo handleGetTodos={handleGetTodos} />
         {mainContent}
       </main>
     </div>
@@ -99,11 +93,10 @@ export default function HomeWrapper({
   todos,
   username,
 }: Props): JSX.Element {
-  console.log('test');
   return (
     <QueryClientProvider client={queryClient}>
       <div className={styles.container}>
-        <Home todos={todos} />
+        <Home initialTodos={todos} />
         <div>
           Status is: {status}, your username is: {username}
         </div>

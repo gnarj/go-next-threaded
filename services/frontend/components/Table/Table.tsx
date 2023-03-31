@@ -138,7 +138,7 @@ export default function Table({ todos, handleGetTodos }: Props): JSX.Element {
   return (
     <Grid container className={styles.tableContainer}>
       <div className={styles.table}>
-        {rows && rows.length > 0 ? (
+        {rows ? (
           <DataGrid
             editMode='row'
             rows={rows}
