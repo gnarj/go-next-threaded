@@ -23,6 +23,8 @@ import { deleteTodo, updateTodo } from '../../utils/api';
 interface TodoItem {
   id: number;
   item: string;
+  duration: number;
+  durationUnit: string;
 }
 
 interface Props {
@@ -81,13 +83,13 @@ export default function Table({ todos, handleGetTodos }: Props): JSX.Element {
   };
 
   const processRowUpdate = (newRow: GridRowModel) => {
-    const { id, item } = newRow;
+    const { id, item, duration, durationUnit } = newRow;
     const updatedRow = { ...newRow, isNew: false };
     const updatedRows = rows.map((row) =>
       row.id === newRow.id ? updatedRow : row
     );
     setRows(updatedRows);
-    updateTodo(id, item);
+    updateTodo(id, item, duration, durationUnit);
     return updatedRow;
   };
 
@@ -98,6 +100,19 @@ export default function Table({ todos, handleGetTodos }: Props): JSX.Element {
       headerName: 'Item',
       editable: true,
       flex: 1,
+      minWidth: 150,
+    },
+    {
+      field: 'duration',
+      headerName: 'Duration',
+      editable: true,
+      minWidth: 150,
+      type: 'number',
+    },
+    {
+      field: 'durationUnit',
+      headerName: 'Time',
+      editable: true,
       minWidth: 150,
     },
     {

@@ -2,3 +2,5 @@
 services/backend/backend
 
 services/backend/go.sum
+
+services/frontend/yarn.lock

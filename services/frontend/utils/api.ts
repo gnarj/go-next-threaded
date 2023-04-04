@@ -21,14 +21,20 @@ export async function addTodo(todoText: string) {
   return response;
 }
 
-export async function updateTodo(id: number, item: string) {
+export async function updateTodo(
+  id: number,
+  item: string,
+  duration: number,
+  durationUnit: string
+) {
   const response = await fetch('http://localhost:8000/update-todo', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ id, item }),
+    body: JSON.stringify({ id, item, duration, durationUnit }),
   });
+  console.log(response);
   if (!response.ok) {
     throw new Error('Failed to update todo item');
   }

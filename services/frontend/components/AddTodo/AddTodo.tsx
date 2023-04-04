@@ -40,6 +40,12 @@ export default function TodoInput({ handleGetTodos }: Props): JSX.Element {
             variant='outlined'
             value={inputValue}
             onChange={handleInputChange}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                handleAddTodo();
+                event.preventDefault();
+              }
+            }}
           />
         </Grid>
         <Grid xs={4}>
